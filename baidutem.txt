@@ -1,0 +1,20 @@
+﻿百度模板主要分为两大部分
+第一部分选区模板
+选区模板
+baidu.template(str,data)参数str为选区模板的dom节点,或者为模板字符串
+		    参数data为模板对应的数据需要
+
+fn对应的值是一个匿名自调函数的返回值。该返回值是一个由bt._compile(str)编译处理后的一个函数		
+    返回值是一个function,该返回值可以继续调用，
+
+bt._compile(str)参数str是传入的模板内容，在该过程中主要是调用bt._analysisStr(str)来解析模板字符串,将解析转换后的字符串，压入到数组_template_fun_array;最后采用join("")的方式将数组_template_fun_array()转换成字符串最后经过字符串拼接的方式形成一个函数体字符串funBody然后采用new Function('_template_object',funBody)的形式将具有函数格式的funBody的字符串转换成具有调用功能的函数因此返回值便是一个未调用的函数。
+
+bt._isObject(source)主要用于判断传入的参数source是不是object类型，用于baidu.template()后的result的三目运算中调用fn(data)，其实就是调用bt._compile(str)返回值的未调函数通过调用fn(data)之后便形成了我们需要的模板生成的html片段
+
+bt._encodeHTML(source)将参数source中的有关html标签和实体的字符用unicode编码的对应方式进行替换
+bt._encodeReg(source)将参数中一些影响正则匹配的字符进行转义替换这里的字符主要包括“[.*+?^=!:${}()|[\]/\\]”
+		String(source).replace(/([.*+?^=!:${}()|[\]/\\])/,"\\$1");  $1的作用是捕获前面正则的字符
+第二部分解析参考
+bt._analysisStr(str)待续。。。
+
+

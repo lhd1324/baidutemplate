@@ -1,0 +1,16 @@
+<html>
+	<head>
+		<meta charset="utf-8"/>
+		<title>encodeReg解析</title>
+	</head>
+	<body>
+		<script>
+			var source=".*aaaa\\{aaake}io|i+wo^ew!o[]=i)o(wi";
+			function encodeReg(str){
+				return String(str).replace(/([.*+?^=!:${}()|[\]/\\])/g,'\\$1');
+			}
+			var result=encodeReg(source);
+			alert(result);
+		</script>
+	</body>
+</html>

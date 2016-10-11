@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+    <head>
+        <title>baidufn函数</title>
+    </head>
+    <body>
+        <script id="temp">
+            <h1>title:<%=title%></h1>
+            <%if(list.length>1) { %>
+                <h2>输出list，共有<%=list.length%>个元素</h2>
+                <ul>
+                    <%for(var i=0;i<5;i++){%>
+                        <li><%=list[i]%></li>
+                    <%}%>
+                </ul>
+            <%}else{%>
+                <h2>没有list数据</h2>   
+            <%}%>
+        </script>
+    </body>
+    <script>
+    window.onload=function(){
+        var data={
+            "title":'欢迎使用baiduTemplate',
+            "list":[
+                'test1:默认支持HTML转义，如输出<script>，也可以关掉，语法<:=value> 详见API',
+                'test2:',
+                'test3:',
+                'test4:list[5]未定义，模板系统会输出空'
+            ]
+        };
+        var str=document.getElementById("temp").innerHTML;
+        alert(str);
+
+        var val=baidu.template(str,data);
+        alert("this is a val:"+val);
+    }
+    
+
+
+    var baidu = typeof module === 'undefined' ? (window.baidu = window.baidu || {}) : module.exports;
+
+    //模板函数（放置于baidu.template命名空间下）
+    baidu.template = function(str, data){
+        alert("this is data:"+data);
+
+        //检查是否有该id的元素存在，如果有元素则获取元素的innerHTML/value，否则认为字符串为模板
+        var fn = (function(){
+            alert("this  is data1"+data);
+            //判断如果没有document，则为非浏览器环境
+            if(!window.document){
+                return _compile(str);
+            };
+
+            //HTML5规定ID可以由任何不包含空格字符的字符串组成
+            var element = document.getElementById(str);
+            if (element) {
+                    
+                //取到对应id的dom，缓存其编译后的HTML模板函数
+                /*
+                if (bt.cache[str]) {
+                    return bt.cache[str];
+                };
+                */
+
+                //textarea或input则取value，其它情况取innerHTML
+                var html = /^(textarea|input)$/i.test(element.nodeName) ? element.value : element.innerHTML;
+                alert(html);
+                return compile(html);
+
+            }else{
+
+                //是模板字符串，则生成一个函数
+                //如果直接传入字符串作为模板，则可能变化过多，因此不考虑缓存
+                return _compile(str);
+            };
+
+        })();
+
+        //有数据则返回HTML字符串，没有数据则返回函数 支持data={}的情况
+        var result = _isObject(data) ? fn( data ) : fn;
+        fn = null;
+        alert("this return value:"+result);
+        return result;
+    };
+
+    function _compile(str){
+        alert("this is _compile str:");
+        var funBody = "var _template_fun_array=[];\nvar fn=(function(__data__){\nvar _template_varName='';\nfor(name in __data__){\n_template_varName+=('var '+name+'=__data__[\"'+name+'\"];');\n};\neval(_template_varName);\n_template_fun_array.push('"+"');\n_template_varName=null;\n})(_template_object);\nfn = null;\nreturn _template_fun_array.join('');\n";
+        return new Function("_template_object",funBody);
+    };
+
+    //判断是否是Object类型
+    function _isObject(source) {
+        alert("this is _isObject source"+source);
+        return 'function' === typeof source || !!(source && 'object' === typeof source);
+    };
+
+
+
+
+    </script>
+</html>
